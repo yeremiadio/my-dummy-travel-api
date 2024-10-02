@@ -29,8 +29,7 @@ export default factories.createCoreController('api::article.article', ({ strapi 
 
     async update(ctx) {
         // Get the authenticated user ID
-        const user = await strapi.plugins['users-permissions'].services.jwt.getToken(ctx);
-
+        const user = ctx.state.user;
 
         // Check if the user is authenticated
         if (!user) {
@@ -40,7 +39,7 @@ export default factories.createCoreController('api::article.article', ({ strapi 
         const { id } = ctx.params;
         const article = await strapi.db.query('api::article.article').findOne({
             where: { documentId: id },
-            populate: { category: true },
+            populate: { user: true },
         });
         // Check if the authenticated user is the creator of the article
         if (article?.user?.id !== user.id) {

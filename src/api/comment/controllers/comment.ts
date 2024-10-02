@@ -7,7 +7,7 @@ import { factories } from '@strapi/strapi'
 export default factories.createCoreController('api::comment.comment', ({ strapi }) => ({
     async create(ctx) {
         // Get the authenticated user ID
-        const user = await strapi.plugins['users-permissions'].services.jwt.getToken(ctx);
+        const user = ctx.state.user;
 
         // Check if the user is authenticated
         if (!user) {
@@ -37,12 +37,12 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         }
         // Fetch the comment to check ownership
         const { id } = ctx.params;
-        const article = await strapi.db.query('api::comment.comment').findOne({
+        const comment = await strapi.db.query('api::comment.comment').findOne({
             where: { documentId: id },
-            populate: { category: true },
+            populate: { user: true },
         });
         // Check if the authenticated user is the creator of the comment
-        if (article?.user?.id !== user.id) {
+        if (comment?.user?.id !== user.id) {
             return ctx.forbidden('You are not allowed to update this comment.');
         }
 
