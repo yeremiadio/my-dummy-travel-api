@@ -7,7 +7,7 @@ import { factories } from '@strapi/strapi'
 export default factories.createCoreController('api::comment.comment', ({ strapi }) => ({
     async create(ctx) {
         // Get the authenticated user ID
-        const user = ctx.state.user;
+        const user = await strapi.plugins['users-permissions'].services.jwt.getToken(ctx);
 
         // Check if the user is authenticated
         if (!user) {

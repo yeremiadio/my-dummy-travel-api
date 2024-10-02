@@ -29,7 +29,7 @@ export default factories.createCoreController('api::article.article', ({ strapi 
 
     async update(ctx) {
         // Get the authenticated user ID
-        const user = ctx.state.user;
+        const user = await strapi.plugins['users-permissions'].services.jwt.getToken(ctx);
 
 
         // Check if the user is authenticated
